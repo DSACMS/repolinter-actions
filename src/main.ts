@@ -6,11 +6,13 @@ import {
   lint,
   resultFormatter,
   markdownFormatter,
-  jsonFormatter
+  jsonFormatter,
+  LintResult
 } from 'repolinter'
 import * as fs from 'fs'
 import getConfig from './getConfig'
 import createOrUpdateIssue from './createorUpdateIssue'
+import { getFileChanges } from './getFileChanges'
 
 function getInputs(): {[key: string]: string} {
   return {
@@ -23,7 +25,8 @@ function getInputs(): {[key: string]: string} {
     OUTPUT_TYPE: core.getInput(ActionInputs.OUTPUT_TYPE, {required: true}),
     OUTPUT_NAME: core.getInput(ActionInputs.OUTPUT_NAME, {required: true}),
     LABEL_NAME: core.getInput(ActionInputs.LABEL_NAME, {required: true}),
-    LABEL_COLOR: core.getInput(ActionInputs.LABEL_COLOR, {required: true})
+    LABEL_COLOR: core.getInput(ActionInputs.LABEL_COLOR, {required: true}),
+    BASE_BRANCH: core.getInput(ActionInputs.BASE_BRANCH, {required: true})
   }
 }
 
@@ -34,6 +37,28 @@ function getRunNumber(): number {
       `Found invalid GITHUB_RUN_NUMBER "${process.env['GITHUB_RUN_NUMBER']}"`
     )
   return runNum
+}
+
+function getPRBody(result: LintResult): string {
+  const content = markdownFormatter.formatOutput(result, true)
+  return `
+  ## Next Steps
+  ### Add Missing Information to the Documents
+  - When viewing the changes of this Pull Request, files and sections have been added in order to bring this repository up to standards.\n
+  - Using either this GitHub page or an IDE, please fill in the section with the proper information that is missing.\n
+  - The body of the section will provide context and examples of how it should be filled out.\n
+  ---
+
+  \n
+  ### The raw results of the repolinter can be found below.
+
+  <details>
+    <summary>
+      Repolinter Results
+    </summary>
+    ${content}
+  </details>
+  `
 }
 
 export default async function run(disableRetry?: boolean): Promise<void> {
@@ -50,7 +75,8 @@ export default async function run(disableRetry?: boolean): Promise<void> {
       OUTPUT_TYPE,
       OUTPUT_NAME,
       LABEL_NAME,
-      LABEL_COLOR
+      LABEL_COLOR,
+      BASE_BRANCH
     } = getInputs()
     const RUN_NUMBER = getRunNumber()
     // verify the directory exists and is a directory
@@ -64,8 +90,8 @@ export default async function run(disableRetry?: boolean): Promise<void> {
       throw e
     }
     // verify the output type is correct
-    if (OUTPUT_TYPE !== 'exit-code' && OUTPUT_TYPE !== 'issue')
-      throw new Error(`Invalid output paramter value ${OUTPUT_TYPE}`)
+    if (OUTPUT_TYPE!== 'exit-code' && OUTPUT_TYPE !== 'issue' && OUTPUT_TYPE !== "pull-request")
+      throw new Error(`Invalid output paramter value ${ OUTPUT_TYPE} There is another error here`)
     // verify the label name is a string
     if (!LABEL_NAME) throw new Error(`Invalid label name value ${LABEL_NAME}`)
     // verify the label color is a color
@@ -107,11 +133,6 @@ export default async function run(disableRetry?: boolean): Promise<void> {
           error: core.error
         }
       })
-      octokit.hook.after('request', (response, options) =>
-        core.debug(
-          `${options.method} ${options.url}: ${JSON.stringify(response)}`
-        )
-      )
 
       const [owner, repo] = REPO.split('/')
       const issueContent = markdownFormatter.formatOutput(result, true)
@@ -130,6 +151,54 @@ export default async function run(disableRetry?: boolean): Promise<void> {
       })
       core.endGroup()
       process.exitCode = 0
+    } else if (OUTPUT_TYPE === 'pull-request') {
+      const octokit = new Octokit({
+        auth: TOKEN,
+        request: disableRetry ? {retries: 0} : undefined,
+        log: {
+          debug: core.debug,
+          info: core.info,
+          warn: core.warning,
+          error: core.error
+        }
+      })
+
+      core.startGroup('Sending a PR')
+      
+      try {
+        const [owner, repo] = REPO.split('/')
+        const jsonOutput = jsonFormatter.formatOutput(result, true)
+        const files = getFileChanges(jsonOutput)
+
+        if (Object.keys(files).length !== 0) {
+          const pr = await octokit.createPullRequest({
+            owner,
+            repo,
+            title: `Repolinter Results`,
+            body: getPRBody(result),
+            base: BASE_BRANCH,
+            head: `repolinter-results-#${RUN_NUMBER}`,
+            changes: [{
+              files,
+              commit: `repolinter-results-#${RUN_NUMBER}`
+            }]
+          })
+
+          if (pr) {
+            core.info(`Created PR: ${pr.data.html_url}`)
+          } 
+
+        } else {
+          console.log("No changes detected")
+        }
+
+      } catch (error) {
+        core.error(`Failed to create pull request: ${(error as Error).message}`)
+        throw error
+      }
+    
+      core.endGroup()
+      process.exitCode = 0
     }
     // set the outputs for this action
     core.setOutput(ActionOutputs.ERRORED, result.errored)
@@ -144,7 +213,7 @@ export default async function run(disableRetry?: boolean): Promise<void> {
     core.setOutput(ActionOutputs.ERRORED, true)
     core.setOutput(ActionOutputs.PASSED, false)
     core.setFailed('A fatal error was thrown.')
-    if (error.name === 'HttpError') {
+    if ((error as RequestError).name === 'HttpError') {
       const requestError = error as RequestError
       // Octokit threw an error, so we can print out detailed information
       core.error(
@@ -154,7 +223,7 @@ export default async function run(disableRetry?: boolean): Promise<void> {
         `${requestError.request.method} ${requestError.request.url} returned status ${requestError.status}`
       )
       core.debug(JSON.stringify(error))
-    } else if (error.stack) core.error(error.stack)
-    else core.error(error)
+    } else if ((error as RequestError).stack) console.log("core.error(error.stack)")
+    else core.error((error as RequestError))
   }
 }

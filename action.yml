@@ -74,7 +74,12 @@ inputs:
         repository with the repolinter output and always exit 0. See the README for
         more details on issue outputting behavior. This output type is ideal for
         non-intrusive notification.
+      * "pull-request": repolitner-action will send a PR.
     default: 'exit-code'
+  base_branch:
+    required: false
+    description: Base branch that a PR will be merged against.
+    default: 'main'
   output_name:
     required: false
     description: >
@@ -111,7 +116,7 @@ outputs:
     description: 'The JSON output from the repolinter run, from repolinter.jsonFormatter.'
 runs:
   using: 'docker'
-  image: docker://ghcr.io/newrelic/repolinter-action:v1.7.0
+  image: 'Dockerfile'
   env:
     INPUT_DIRECTORY: ${{ inputs.directory }}
     INPUT_TOKEN: ${{ inputs.token }}

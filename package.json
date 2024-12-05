@@ -9,7 +9,7 @@
     "format": "prettier --write **/*.ts",
     "format-check": "prettier --check **/*.ts",
     "lint": "eslint src/**/*.ts __tests__/**/*.ts --fix",
-    "package": "ncc build --source-map --minify",
+    "package": "export NODE_OPTIONS=--openssl-legacy-provider && ncc build --source-map",
     "test": "jest",
     "release": "semantic-release",
     "all": "npm run format && npm run lint && npm run build && npm run package && npm test"
@@ -33,7 +33,9 @@
     "@octokit/types": "^6.13.0",
     "@types/js-yaml": "^4.0.0",
     "@types/node-fetch": "^2.5.10",
+    "js-base64": "^3.7.7",
     "node-fetch": "^2.6.1",
+    "octokit-plugin-create-pull-request": "^6.0.0",
     "repolinter": "^0.11.1"
   },
   "devDependencies": {
