@@ -725,7 +725,7 @@ function run(disableRetry) {
                             head: `repolinter-results-#${RUN_NUMBER}`,
                             changes: [{
                                     files,
-                                    commit: `repolinter-results-#${RUN_NUMBER}`
+                                    commit: `changes based on repolinter output`
                                 }]
                         });
                         if (pr) {

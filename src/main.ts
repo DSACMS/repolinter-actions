@@ -180,7 +180,7 @@ export default async function run(disableRetry?: boolean): Promise<void> {
             head: `repolinter-results-#${RUN_NUMBER}`,
             changes: [{
               files,
-              commit: `repolinter-results-#${RUN_NUMBER}`
+              commit: `changes based on repolinter output`
             }]
           })
 

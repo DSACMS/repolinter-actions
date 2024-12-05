@@ -18,6 +18,5 @@ jobs:
         with:
           output_type: 'pull-request'
           base_branch: 'main'
-          token: ${{ secrets.REPOLINTER_AUTO_TOKEN }}
 
 
