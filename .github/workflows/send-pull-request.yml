@@ -1,16 +1,23 @@
-name: Test New Repolinter Action
+name: Repolinter Action
 on: 
     workflow_dispatch: {} 
 
 jobs:
-  test:
+  repolint:
     runs-on: ubuntu-latest
+    name: Run Repolinter
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
     steps:
       - uses: actions/checkout@v4
       
       - name: Test Local Action
         uses: DSACMS/repolinter-action@main 
         with:
-          output_type: 'pull-request'  
+          output_type: 'pull-request'
+          base_branch: 'main'
+          token: ${{ secrets.REPOLINTER_AUTO_TOKEN }}
 
 
