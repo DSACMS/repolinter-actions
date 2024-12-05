@@ -24,3 +24,25 @@ Keep in mind that when you submit your Pull Request, you'll need to sign the CLA
 
 For more information about CLAs, please check out Alex Russell’s excellent post,
 [“Why Do I Need to Sign This?”](https://infrequently.org/2008/06/why-do-i-need-to-sign-this/).
+ 
+ ## Getting Started
+ <!--- TODO: If you have 'good-first-issue' or 'easy' labels for newcomers, mention them here.--> 
+ 
+ ### Building Dependencies
+ <!--- TODO: This step is often skipped, so don't forget to include the steps needed to install on your platform. If you project can be multi-platform, this is an excellent place for first time contributors to send patches!--> 
+ 
+ ### Building the Project
+ <!--- TODO: Be sure to include build scripts and instructions, not just the source code itself! -->
+ 
+ ## Policies
+ 
+ ### Open Source Policy
+ We adhere to the [CMS Open Source Policy](https://github.com/CMSGov/cms-open-source-policy). If you have any questions, just [shoot us an email](mailto:opensource@cms.hhs.gov).
+ 
+ ### Security and Responsible Disclosure Policy
+ *Submit a vulnerability:* Vulnerability reports can be submitted through [Bugcrowd](https://bugcrowd.com/cms-vdp). Reports may be submitted anonymously. If you share contact information, we will acknowledge receipt of your report within 3 business days.
+ For more information about our Security, Vulnerability, and Responsible Disclosure Policies, see [SECURITY.md](SECURITY.md).
+ 
+ ## Public Domain
+ This project is in the public domain within the United States, and copyright and related rights in the work worldwide are waived through the [CC0 1.0 Universal public domain dedication](https://creativecommons.org/publicdomain/zero/1.0/) as indicated in [LICENSE](LICENSE).
+ All contributions to this project will be released under the CC0 dedication. By submitting a pull request or issue, you are agreeing to comply with this waiver of copyright interest.
