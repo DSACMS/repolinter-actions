@@ -158,9 +158,7 @@ To use the PR creation feature, you'll need to modify your repolinter configurat
 ```
 
 #### Example Repolinter Configuration Files
-- [Reposcaffolder Tier 2](https://github.com/DSACMS/repo-scaffolder/blob/main/tier2/%7B%7Bcookiecutter.project_slug%7D%7D/repolinter.json)
-- [Reposcaffolder Tier 3](https://github.com/DSACMS/repo-scaffolder/blob/main/tier3/%7B%7Bcookiecutter.project_slug%7D%7D/repolinter.json)
-- [Reposcaffolder Tier 4](https://github.com/DSACMS/repo-scaffolder/blob/main/tier4/%7B%7Bcookiecutter.project_slug%7D%7D/repolinter.json)
+- [Reposcaffolder Tier 1](https://github.com/DSACMS/repo-scaffolder/blob/main/tier1/%7B%7Bcookiecutter.project_slug%7D%7D/repolinter.json)
 
 
 ## Usage
