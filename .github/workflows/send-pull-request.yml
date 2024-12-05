@@ -1,22 +1,19 @@
-name: Repolinter Action
+name: 'Create a PR based on validation'
+
 on: 
     workflow_dispatch: {} 
 
 jobs:
-  repolint:
+  repolinter-action:
     runs-on: ubuntu-latest
     name: Run Repolinter
     permissions:
       contents: write
       pull-requests: write
-      issues: write
     steps:
-      - uses: actions/checkout@v4
-      
-      - name: Test Local Action
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+      - name: 'Run Repolinter'
         uses: DSACMS/repolinter-action@main 
         with:
           output_type: 'pull-request'
-          base_branch: 'main'
-
-

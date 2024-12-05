@@ -1,17 +1,15 @@
-[![New Relic Experimental header](https://github.com/newrelic/opensource-website/raw/master/src/images/categories/Experimental.png)](https://opensource.newrelic.com/oss-category/#new-relic-experimental)
+# Repolinter Actions
 
-# Repolinter Action v1
+[![GitHub Marketplace version](https://img.shields.io/github/release/newrelic/repolinter-action.svg?label=Marketplace&logo=github)](https://github.com/marketplace/actions/repolinter-action) ![Release](https://github.com/newrelic/repolinter-action/workflows/Release/badge.svg?event=push) [![codecov](https://codecov.io/gh/newrelic/repolinter-action/branch/main/graph/badge.svg?token=EWYZ7C6RSL)](https://codecov.io/gh/newrelic/repolinter-action) 
 
-[![GitHub Marketplace version](https://img.shields.io/github/release/newrelic/repolinter-action.svg?label=Marketplace&logo=github)](https://github.com/marketplace/actions/repolinter-action) ![Release](https://github.com/newrelic/repolinter-action/workflows/Release/badge.svg?event=push) [![codecov](https://codecov.io/gh/newrelic/repolinter-action/branch/main/graph/badge.svg?token=EWYZ7C6RSL)](https://codecov.io/gh/newrelic/repolinter-action) [![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/newrelic/repolinter-action.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/newrelic/repolinter-action/context:javascript)
+This action runs [Repolinter](https://github.com/todogroup/repolinter). This fork extends the original [repolinter-action](https://github.com/newrelic/repolinter-action) by allowing users to automatically create Pull Requests that fix compliance issues. When Repolinter detects missing files or required content, it creates a Pull Request with the necessary files and content based on templates defined in your repolinter configuration.  To enable this feature, your repolinter rules must include `file-name` and `file-content` fields within the options object to specify the target file and its template content. 
 
-This action runs [Repolinter](https://github.com/todogroup/repolinter) on your repository. Repolinter's optional external dependencies (licensee, linguist, github-markup) are installed using a docker build step. Optionally you can also configure this tool to create GitHub issues with the Repolinter output.
-
-Currently this action uses the [newrelic-forks/repolinter](https://github.com/newrelic-forks/repolinter) fork, which includes a number of changes needed for issue creation support. A [PR](https://github.com/todogroup/repolinter/pull/174) to merge this fork into Repolinter is underway.
+##### Currently, only sending PR's are available in this action. If you would like to send an Issue rather than a PR, use the original [repolinter-action](https://github.com/newrelic/repolinter-action). We plan to support both.
 
 ## Inputs
 
 ```yaml
-- uses: repolinter-action@v1
+- uses: DSACMS/repolinter-actions@main
   with:
     # The directory Repolinter should run against. Accepts an absolute path
     # or a path relative to $GITHUB_WORKSPACE.
@@ -45,6 +43,9 @@ Currently this action uses the [newrelic-forks/repolinter](https://github.com/ne
     #   repository with the repolinter output and always exit 0. See the README for
     #   more details on issue outputting behavior. This output type is ideal for
     #   non-intrusive notification.
+    # * "pull-request": repolinter-action will send a PR with the neccessary changes 
+    #   based on the repolinter configuration. This output type is ideal for repo owners
+    #   who want comprehensive compliance.
     #
     # Default: "exit-code"
     output_type: ''
@@ -115,8 +116,78 @@ Currently this action uses the [newrelic-forks/repolinter](https://github.com/ne
 | `errored`     | boolean | A boolean indicating whether or or not any errors occurred when running repolinter-action                     |
 | `json_output` | string? | The JSON-ified repolinter output from `repolinter.jsonFormatter`. Will only be present if `errored` is false. |
 
+## Setting up Repolinter Configuration
+To use the PR creation feature, you'll need to modify your repolinter configuration to include two additional fields in the `options` object for each rule:
+
+- `file-name`: Specifies the name of the file to create or update
+- `file-content`: Defines the template content to be added
+
+#### Example Configuration
+```json
+ "rules": {
+   "security-file-exists": {
+     "level": "error",
+     "rule": {
+       "type": "file-existence",
+       "options": {
+         "globsAny": ["{docs/,.github/,}SECURITY.md"],
+         "file-name": "SECURITY.md",
+         "file-content": "# Security Policy\n\n
+         ## Submit a vulnerability: Vulnerability reports can be submitted through Bugcrowd. Reports may be submitted anonymously. If you share contact information, we will acknowledge receipt of your report within 3 business days.
+         Review the HHS Disclosure Policy and websites in scope: https://www.hhs.gov/vulnerability-disclosure-policy/index.html."
+       }
+     }
+   },
+   "readme-contains-about": {
+     "level": "error",
+     "rule": {
+       "type": "file-contents",
+       "options": {
+         "globsAll": ["README.md"],
+         "content": "about",
+         "flags": "i",
+         "file-name": "README.md",
+         "file-content": "\n## About the Project\n\n
+          This project helps you do amazing things by doing this and then achieving that."
+       }
+     }
+   }
+ }
+```
+
+#### Example Repolinter Configuration Files
+- [Reposcaffolder Tier 2](https://github.com/DSACMS/repo-scaffolder/blob/main/tier2/%7B%7Bcookiecutter.project_slug%7D%7D/repolinter.json)
+- [Reposcaffolder Tier 3](https://github.com/DSACMS/repo-scaffolder/blob/main/tier3/%7B%7Bcookiecutter.project_slug%7D%7D/repolinter.json)
+- [Reposcaffolder Tier 4](https://github.com/DSACMS/repo-scaffolder/blob/main/tier4/%7B%7Bcookiecutter.project_slug%7D%7D/repolinter.json)
+
+
 ## Usage
 
+### Create a PR based on validation 
+The following will run Repolinter and send a PR based on the output when the workflow is manually activated. If the repo is compliant with the repolinter configuration, nothing will be sent otherwise, a PR with the missing files and fields will be sent.
+```yaml
+name: 'Create a PR based on validation'
+
+on: 
+    workflow_dispatch: {} 
+
+jobs:
+  repolinter-action:
+    runs-on: ubuntu-latest
+    name: Run Repolinter
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+      - name: 'Run Repolinter'
+        uses: DSACMS/repolinter-actions@main 
+        with:
+          output_type: 'pull-request'
+          token: ${{ secrets.PERSONAL_ACCESS_TOKEN}}
+          # The PAT needs full `repo` scope
+```
 ### Validate master branch with the default ruleset
 
 The following will run Repolinter with the default ruleset on every push to master, and exit with status 1 if the repository does not pass.
@@ -226,8 +297,12 @@ jobs:
           username: my-token-username
           token: ${{ secrets.MY_TOKEN }}
 ```
+## PR Creation Behavior
+if `output_type` is set to `pull-request`, repolinter-action will create a PR with the Repolinter output on the cirrent repository. An example PR can be found here: https://github.com/DSACMS/repolinter-actions/pull/2
 
 ## Issue Creation Behavior
+
+##### Currently, only sending PR's are available in this action. If you would like to send an Issue rather than a PR, use the original [repolinter-action](https://github.com/newrelic/repolinter-action). We plan to support both.
 
 If `output_type` is set to `issue`, repolinter-action will create a GitHub issue with the Repolinter output on the current repository. An example issue can be found here: https://github.com/aperture-science-incorporated/companion-cube/issues/44.
 
