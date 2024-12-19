@@ -12,7 +12,7 @@ import {
 import * as fs from 'fs'
 import getConfig from './getConfig'
 import createOrUpdateIssue from './createorUpdateIssue'
-import { getFileChanges } from './getFileChanges'
+import { getFileChanges, getLabelStrings } from './getFileChanges'
 
 function getInputs(): {[key: string]: string} {
   return {
@@ -169,6 +169,7 @@ export default async function run(disableRetry?: boolean): Promise<void> {
         const [owner, repo] = REPO.split('/')
         const jsonOutput = jsonFormatter.formatOutput(result, true)
         const files = getFileChanges(jsonOutput)
+        const labels = getLabelStrings(jsonOutput)
 
         if (Object.keys(files).length !== 0) {
           const pr = await octokit.createPullRequest({
@@ -178,6 +179,7 @@ export default async function run(disableRetry?: boolean): Promise<void> {
             body: getPRBody(result),
             base: BASE_BRANCH,
             head: `repolinter-results-#${RUN_NUMBER}`,
+            labels: labels,
             changes: [{
               files,
               commit: `changes based on repolinter output`
@@ -185,6 +187,7 @@ export default async function run(disableRetry?: boolean): Promise<void> {
           })
 
           if (pr) {
+            core.info(`Created Labels: ${labels}`)
             core.info(`Created PR: ${pr.data.html_url}`)
           } 
 

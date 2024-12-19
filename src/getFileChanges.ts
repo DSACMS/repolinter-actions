@@ -3,6 +3,8 @@ import * as fs from 'fs';
 interface RepolinterResult {
     results: Array<{
         ruleInfo: {
+            name: string,
+            level: string
             ruleConfig: {
                 ['file-name']: string;
                 ['file-content']: string;
@@ -48,4 +50,31 @@ export function getFileChanges(jsonResult: string): { [key: string]: string } {
         console.error('Error parsing repolinter results:', error);
         return {};
     }
+}
+
+export function getLabelStrings(jsonResult: string): [string] { 
+    var labels: [string] = [""]
+    const defaultLabels: [string] = ["OSPO"]
+    const data: RepolinterResult = JSON.parse(jsonResult)
+
+    for(const result of data.results) {
+        if (result.ruleInfo.name == "readme-contains-governance" && result.ruleInfo.level == "error")  {
+            labels.push("Tier 4")
+        } 
+        else if (result.ruleInfo.name == "readme-contains-documentation-index" && result.ruleInfo.level == "error") {
+            labels.push("Tier 3")
+        } 
+        else if (result.ruleInfo.name == "community-guidelines-file-exists" && result.ruleInfo.level == "error") {
+            labels.push("Tier 2")
+        } 
+        else if (result.ruleInfo.name == "license-file-exists" && result.ruleInfo.level == "error") {
+            labels.push("Tier 1")
+        } 
+        else {
+            labels.push("Tier 0")
+        }
+    }
+
+    labels.push(...defaultLabels)
+    return labels
 }
