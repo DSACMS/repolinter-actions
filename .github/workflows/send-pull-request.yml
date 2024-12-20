@@ -16,5 +16,4 @@ jobs:
       - name: 'Run Repolinter'
         uses: DSACMS/repolinter-action@main 
         with:
-          output_type: pull_request
-          pull_request_labels: tier1, OSPO
+          output_type: 'pull-request'
