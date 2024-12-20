@@ -91,7 +91,13 @@ inputs:
 
       This option will be ignored if output_type != "issue".
     default: '[Repolinter] Open Source Policy Issues'
-  label_name:
+  pull_request_labels:
+    required: false
+    description: >
+      A list of tags that will be attached to the pull request. These tags should be 
+      used in order to identify the pull request. Split the tags with a comma.
+    default: 'repolinter'
+  issue_label_name:
     required: false
     description: >
       The name to use for the issue label created by repolinter-action. This name
@@ -100,7 +106,7 @@ inputs:
 
       This option will be ignored if output_type != "issue".
     default: 'repolinter'
-  label_color:
+  issue_label_color:
     required: false
     description: >
       The color to use for the issue label created by repolinter-action. The value

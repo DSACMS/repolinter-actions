@@ -12,7 +12,7 @@ import {
 import * as fs from 'fs'
 import getConfig from './getConfig'
 import createOrUpdateIssue from './createorUpdateIssue'
-import { getFileChanges, getLabelStrings } from './getFileChanges'
+import { getFileChanges } from './getFileChanges'
 
 function getInputs(): {[key: string]: string} {
   return {
@@ -24,8 +24,9 @@ function getInputs(): {[key: string]: string} {
     REPO: core.getInput(ActionInputs.REPO, {required: true}),
     OUTPUT_TYPE: core.getInput(ActionInputs.OUTPUT_TYPE, {required: true}),
     OUTPUT_NAME: core.getInput(ActionInputs.OUTPUT_NAME, {required: true}),
-    LABEL_NAME: core.getInput(ActionInputs.LABEL_NAME, {required: true}),
-    LABEL_COLOR: core.getInput(ActionInputs.LABEL_COLOR, {required: true}),
+    PULL_REQUEST_LABELS: core.getInput(ActionInputs.PULL_REQUEST_LABELS, {required: true}),
+    ISSUE_LABEL_NAME: core.getInput(ActionInputs.ISSUE_LABEL_NAME, {required: true}),
+    ISSUE_LABEL_COLOR: core.getInput(ActionInputs.ISSUE_LABEL_COLOR, {required: true}),
     BASE_BRANCH: core.getInput(ActionInputs.BASE_BRANCH, {required: true})
   }
 }
@@ -74,6 +75,7 @@ export default async function run(disableRetry?: boolean): Promise<void> {
       REPO,
       OUTPUT_TYPE,
       OUTPUT_NAME,
+      PULL_REQUEST_LABELS,
       LABEL_NAME,
       LABEL_COLOR,
       BASE_BRANCH
@@ -92,8 +94,9 @@ export default async function run(disableRetry?: boolean): Promise<void> {
     // verify the output type is correct
     if (OUTPUT_TYPE!== 'exit-code' && OUTPUT_TYPE !== 'issue' && OUTPUT_TYPE !== "pull-request")
       throw new Error(`Invalid output paramter value ${ OUTPUT_TYPE} There is another error here`)
+    if (!PULL_REQUEST_LABELS) throw new Error(`Invalid pull request label name value ${PULL_REQUEST_LABELS}`)
     // verify the label name is a string
-    if (!LABEL_NAME) throw new Error(`Invalid label name value ${LABEL_NAME}`)
+    if (!LABEL_NAME) throw new Error(`Invalid issue label name value ${LABEL_NAME}`)
     // verify the label color is a color
     if (!/[0-9a-fA-F]{6}/.test(LABEL_COLOR))
       throw new Error(`Invalid label color ${LABEL_COLOR}`)
@@ -167,9 +170,11 @@ export default async function run(disableRetry?: boolean): Promise<void> {
       
       try {
         const [owner, repo] = REPO.split('/')
+        const originalLables = PULL_REQUEST_LABELS.replace(/\s/g, "");
+        const cleanedLabels = originalLables.split(",")
+
         const jsonOutput = jsonFormatter.formatOutput(result, true)
         const files = getFileChanges(jsonOutput)
-        const labels = getLabelStrings(jsonOutput)
 
         if (Object.keys(files).length !== 0) {
           const pr = await octokit.createPullRequest({
@@ -179,7 +184,7 @@ export default async function run(disableRetry?: boolean): Promise<void> {
             body: getPRBody(result),
             base: BASE_BRANCH,
             head: `repolinter-results-#${RUN_NUMBER}`,
-            labels: labels,
+            labels: cleanedLabels,
             changes: [{
               files,
               commit: `changes based on repolinter output`
@@ -187,7 +192,7 @@ export default async function run(disableRetry?: boolean): Promise<void> {
           })
 
           if (pr) {
-            core.info(`Created Labels: ${labels}`)
+            core.info(`Created Labels: ${cleanedLabels}`)
             core.info(`Created PR: ${pr.data.html_url}`)
           } 
 
