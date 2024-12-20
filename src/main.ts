@@ -170,8 +170,9 @@ export default async function run(disableRetry?: boolean): Promise<void> {
       
       try {
         const [owner, repo] = REPO.split('/')
-        const originalLables = PULL_REQUEST_LABELS.replace(/\s/g, "");
-        const cleanedLabels = originalLables.split(",")
+
+        // const originalLables = PULL_REQUEST_LABELS.replace(/\s/g, "");
+        // const cleanedLabels = originalLables.split(",")
 
         const jsonOutput = jsonFormatter.formatOutput(result, true)
         const files = getFileChanges(jsonOutput)
@@ -184,7 +185,7 @@ export default async function run(disableRetry?: boolean): Promise<void> {
             body: getPRBody(result),
             base: BASE_BRANCH,
             head: `repolinter-results-#${RUN_NUMBER}`,
-            labels: cleanedLabels,
+            labels: ["Tier 1"],
             changes: [{
               files,
               commit: `changes based on repolinter output`
@@ -192,7 +193,7 @@ export default async function run(disableRetry?: boolean): Promise<void> {
           })
 
           if (pr) {
-            core.info(`Created Labels: ${cleanedLabels}`)
+            core.info(`Created Labels: ${PULL_REQUEST_LABELS}`)
             core.info(`Created PR: ${pr.data.html_url}`)
           } 
 
