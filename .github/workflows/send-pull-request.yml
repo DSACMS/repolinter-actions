@@ -14,7 +14,7 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v4
       - name: 'Run Repolinter'
-        uses: DSACMS/repolinter-action@sachin/label-support 
+        uses: DSACMS/repolinter-action@sachin/label-support
         with:
           output_type: 'pull-request'
-          labels: 'repolinter, OSPO, Tier 1'
+          pull_request_labels: 'repolinter, OSPO, Tier 1'
