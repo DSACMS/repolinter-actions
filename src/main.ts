@@ -24,9 +24,10 @@ function getInputs(): {[key: string]: string} {
     REPO: core.getInput(ActionInputs.REPO, {required: true}),
     OUTPUT_TYPE: core.getInput(ActionInputs.OUTPUT_TYPE, {required: true}),
     OUTPUT_NAME: core.getInput(ActionInputs.OUTPUT_NAME, {required: true}),
-    LABEL_NAME: core.getInput(ActionInputs.LABEL_NAME, {required: true}),
-    LABEL_COLOR: core.getInput(ActionInputs.LABEL_COLOR, {required: true}),
-    BASE_BRANCH: core.getInput(ActionInputs.BASE_BRANCH, {required: true})
+    ISSUE_LABEL_NAME: core.getInput(ActionInputs.ISSUE_LABEL_NAME, {required: true}),
+    ISSUE_LABEL_COLOR: core.getInput(ActionInputs.ISSUE_LABEL_COLOR, {required: true}),
+    BASE_BRANCH: core.getInput(ActionInputs.BASE_BRANCH, {required: true}),
+    PULL_REQUEST_LABELS: core.getInput(ActionInputs.PULL_REQUEST_LABELS, {required: true})
   }
 }
 
@@ -61,6 +62,21 @@ function getPRBody(result: LintResult): string {
   `
 }
 
+function cleanLabels(labels: string): string[] {
+  try {
+    const arrayOfLabels = labels.split(",")
+    const cleanedLabels: string[] = []
+
+    arrayOfLabels.forEach((element) => {
+      cleanedLabels.push(element.trim())
+    })
+
+    return cleanedLabels
+  } catch (error) {
+    throw new Error('Invalid label format. See GitHub label documentation: https://docs.github.com/en/issues/using-labels-and-milestones-to-track-work/managing-labels')
+  }
+}
+
 export default async function run(disableRetry?: boolean): Promise<void> {
   // load the configuration from file or url, depending on which one is configured
   try {
@@ -74,9 +90,10 @@ export default async function run(disableRetry?: boolean): Promise<void> {
       REPO,
       OUTPUT_TYPE,
       OUTPUT_NAME,
-      LABEL_NAME,
-      LABEL_COLOR,
-      BASE_BRANCH
+      ISSUE_LABEL_NAME,
+      ISSUE_LABEL_COLOR,
+      BASE_BRANCH,
+      PULL_REQUEST_LABELS
     } = getInputs()
     const RUN_NUMBER = getRunNumber()
     // verify the directory exists and is a directory
@@ -93,10 +110,10 @@ export default async function run(disableRetry?: boolean): Promise<void> {
     if (OUTPUT_TYPE!== 'exit-code' && OUTPUT_TYPE !== 'issue' && OUTPUT_TYPE !== "pull-request")
       throw new Error(`Invalid output paramter value ${ OUTPUT_TYPE} There is another error here`)
     // verify the label name is a string
-    if (!LABEL_NAME) throw new Error(`Invalid label name value ${LABEL_NAME}`)
+    if (!ISSUE_LABEL_NAME) throw new Error(`Invalid label name value ${ISSUE_LABEL_NAME}`)
     // verify the label color is a color
-    if (!/[0-9a-fA-F]{6}/.test(LABEL_COLOR))
-      throw new Error(`Invalid label color ${LABEL_COLOR}`)
+    if (!/[0-9a-fA-F]{6}/.test(ISSUE_LABEL_COLOR))
+      throw new Error(`Invalid label color ${ISSUE_LABEL_COLOR}`)
     // override GITHUB_TOKEN and INPUT_GITHUB_TOKEN if INPUT_TOKEN is present
     if (TOKEN) {
       delete process.env['INPUT_TOKEN']
@@ -144,8 +161,8 @@ export default async function run(disableRetry?: boolean): Promise<void> {
         username: USERNAME,
         issueName: OUTPUT_NAME,
         issueContent,
-        labelName: LABEL_NAME,
-        labelColor: LABEL_COLOR,
+        labelName: ISSUE_LABEL_NAME,
+        labelColor: ISSUE_LABEL_COLOR,
         shouldClose: result.passed === true,
         runNumber: RUN_NUMBER
       })
@@ -167,8 +184,11 @@ export default async function run(disableRetry?: boolean): Promise<void> {
       
       try {
         const [owner, repo] = REPO.split('/')
+        const cleanedLabels = cleanLabels(PULL_REQUEST_LABELS)
+
         const jsonOutput = jsonFormatter.formatOutput(result, true)
         const files = getFileChanges(jsonOutput)
+
 
         if (Object.keys(files).length !== 0) {
           const pr = await octokit.createPullRequest({
@@ -178,6 +198,7 @@ export default async function run(disableRetry?: boolean): Promise<void> {
             body: getPRBody(result),
             base: BASE_BRANCH,
             head: `repolinter-results-#${RUN_NUMBER}`,
+            labels: cleanedLabels,
             changes: [{
               files,
               commit: `changes based on repolinter output`
@@ -186,7 +207,8 @@ export default async function run(disableRetry?: boolean): Promise<void> {
 
           if (pr) {
             core.info(`Created PR: ${pr.data.html_url}`)
-          } 
+            core.info(`Created Labels for PR: ${cleanedLabels}`)
+          }   
 
         } else {
           console.log("No changes detected")
