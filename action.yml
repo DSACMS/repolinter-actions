@@ -113,8 +113,8 @@ inputs:
     required: false
     description: >
       The labels that you want to use to add to your Pull Request created 
-      by repolinter-actions. These values shouldbe seperated by commas.
-      Example: "repolinter, OSPO, Tier 2"
+      by repolinter-actions. These values should be seperated by commas.
+      Example: "repolinter, cms-oss, cms-oss-{tier1, tier2, tier3, tier4}"
     default: 'repolinter'
 outputs:
   passed:
