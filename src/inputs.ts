@@ -7,9 +7,10 @@ export const enum ActionInputs {
   REPO = 'repository',
   OUTPUT_TYPE = 'output_type',
   OUTPUT_NAME = 'output_name',
-  LABEL_NAME = 'label_name',
-  LABEL_COLOR = 'label_color',
-  BASE_BRANCH = "base_branch"
+  ISSUE_LABEL_NAME = 'issue_label_name',
+  ISSUE_LABEL_COLOR = 'issue_label_color',
+  BASE_BRANCH = "base_branch",
+  PULL_REQUEST_LABELS = 'pull_request_labels'
 }
 
 export const enum ActionOutputs {

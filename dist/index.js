@@ -585,9 +585,10 @@ function getInputs() {
         REPO: core.getInput("repository" /* REPO */, { required: true }),
         OUTPUT_TYPE: core.getInput("output_type" /* OUTPUT_TYPE */, { required: true }),
         OUTPUT_NAME: core.getInput("output_name" /* OUTPUT_NAME */, { required: true }),
-        LABEL_NAME: core.getInput("label_name" /* LABEL_NAME */, { required: true }),
-        LABEL_COLOR: core.getInput("label_color" /* LABEL_COLOR */, { required: true }),
-        BASE_BRANCH: core.getInput("base_branch" /* BASE_BRANCH */, { required: true })
+        ISSUE_LABEL_NAME: core.getInput("issue_label_name" /* ISSUE_LABEL_NAME */, { required: true }),
+        ISSUE_LABEL_COLOR: core.getInput("issue_label_color" /* ISSUE_LABEL_COLOR */, { required: true }),
+        BASE_BRANCH: core.getInput("base_branch" /* BASE_BRANCH */, { required: true }),
+        PULL_REQUEST_LABELS: core.getInput("pull_request_labels" /* PULL_REQUEST_LABELS */, { required: true })
     };
 }
 function getRunNumber() {
@@ -617,12 +618,25 @@ function getPRBody(result) {
   </details>
   `;
 }
+function cleanLabels(labels) {
+    try {
+        const arrayOfLabels = labels.split(",");
+        const cleanedLabels = [];
+        arrayOfLabels.forEach((element) => {
+            cleanedLabels.push(element.trim());
+        });
+        return cleanedLabels;
+    }
+    catch (error) {
+        throw new Error('Invalid label format. See GitHub label documentation: https://docs.github.com/en/issues/using-labels-and-milestones-to-track-work/managing-labels');
+    }
+}
 function run(disableRetry) {
     return __awaiter(this, void 0, void 0, function* () {
         // load the configuration from file or url, depending on which one is configured
         try {
             // get all inputs
-            const { DIRECTORY, TOKEN, USERNAME, CONFIG_FILE, CONFIG_URL, REPO, OUTPUT_TYPE, OUTPUT_NAME, LABEL_NAME, LABEL_COLOR, BASE_BRANCH } = getInputs();
+            const { DIRECTORY, TOKEN, USERNAME, CONFIG_FILE, CONFIG_URL, REPO, OUTPUT_TYPE, OUTPUT_NAME, ISSUE_LABEL_NAME, ISSUE_LABEL_COLOR, BASE_BRANCH, PULL_REQUEST_LABELS } = getInputs();
             const RUN_NUMBER = getRunNumber();
             // verify the directory exists and is a directory
             try {
@@ -637,11 +651,11 @@ function run(disableRetry) {
             if (OUTPUT_TYPE !== 'exit-code' && OUTPUT_TYPE !== 'issue' && OUTPUT_TYPE !== "pull-request")
                 throw new Error(`Invalid output paramter value ${OUTPUT_TYPE} There is another error here`);
             // verify the label name is a string
-            if (!LABEL_NAME)
-                throw new Error(`Invalid label name value ${LABEL_NAME}`);
+            if (!ISSUE_LABEL_NAME)
+                throw new Error(`Invalid label name value ${ISSUE_LABEL_NAME}`);
             // verify the label color is a color
-            if (!/[0-9a-fA-F]{6}/.test(LABEL_COLOR))
-                throw new Error(`Invalid label color ${LABEL_COLOR}`);
+            if (!/[0-9a-fA-F]{6}/.test(ISSUE_LABEL_COLOR))
+                throw new Error(`Invalid label color ${ISSUE_LABEL_COLOR}`);
             // override GITHUB_TOKEN and INPUT_GITHUB_TOKEN if INPUT_TOKEN is present
             if (TOKEN) {
                 delete process.env['INPUT_TOKEN'];
@@ -691,8 +705,8 @@ function run(disableRetry) {
                     username: USERNAME,
                     issueName: OUTPUT_NAME,
                     issueContent,
-                    labelName: LABEL_NAME,
-                    labelColor: LABEL_COLOR,
+                    labelName: ISSUE_LABEL_NAME,
+                    labelColor: ISSUE_LABEL_COLOR,
                     shouldClose: result.passed === true,
                     runNumber: RUN_NUMBER
                 });
@@ -713,6 +727,7 @@ function run(disableRetry) {
                 core.startGroup('Sending a PR');
                 try {
                     const [owner, repo] = REPO.split('/');
+                    const cleanedLabels = cleanLabels(PULL_REQUEST_LABELS);
                     const jsonOutput = repolinter_1.jsonFormatter.formatOutput(result, true);
                     const files = getFileChanges_1.getFileChanges(jsonOutput);
                     if (Object.keys(files).length !== 0) {
@@ -723,6 +738,7 @@ function run(disableRetry) {
                             body: getPRBody(result),
                             base: BASE_BRANCH,
                             head: `repolinter-results-#${RUN_NUMBER}`,
+                            labels: cleanedLabels,
                             changes: [{
                                     files,
                                     commit: `changes based on repolinter output`
@@ -730,6 +746,7 @@ function run(disableRetry) {
                         });
                         if (pr) {
                             core.info(`Created PR: ${pr.data.html_url}`);
+                            core.info(`Created Labels for PR: ${cleanedLabels}`);
                         }
                     }
                     else {

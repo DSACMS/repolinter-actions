@@ -14,6 +14,7 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v4
       - name: 'Run Repolinter'
-        uses: DSACMS/repolinter-action@main 
+        uses: DSACMS/repolinter-action@main
         with:
           output_type: 'pull-request'
+          pull_request_labels: 'repolinter, cms-oss, cms-gov'
