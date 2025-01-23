@@ -1,57 +1,20 @@
-name: "Repository Hygiene Check"
-on:
-  push:
-    branches:
-      - 'main'
-  workflow_dispatch:
+name: 'Create a PR based on validation'
+
+on: 
+    workflow_dispatch: {} 
 
 jobs:
-  check-first-run:
-    name: Check For First Run
+  repolinter-action:
     runs-on: ubuntu-latest
-    outputs:
-      should_run: ${{ steps.check.outputs.should_run }}
-    permissions:
-      contents: read
-      pull-requests: write
-    steps:
-      - uses: actions/checkout@v4
-      - id: check
-        run: |
-          # If manually triggered, always run
-
-          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-            echo "should_run=true" >> $GITHUB_OUTPUT
-            exit 0
-
-          fi
-          
-          # Check if initialization label exists
-
-          has_label=$(gh label list --json name | jq '.[] | select(.name=="repolinter-initialized")')
-
-          if [[ -z "$has_label" ]]; then
-            # First time - create label and allow run
-            gh label create repolinter-initialized --description "Marks repo as having run initial repolinter check"
-            echo "should_run=true" >> $GITHUB_OUTPUT
-          else
-            echo "should_run=false" >> $GITHUB_OUTPUT
-
-          fi
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  repolinter-checks:
-    name: Tier 2 Checks
-    needs: check-first-run
-    if: needs.check-first-run.outputs.should_run == 'true'
-    runs-on: ubuntu-latest
+    name: Run Repolinter
     permissions:
       contents: write
       pull-requests: write
     steps:
-      - uses: DSACMS/repolinter-action@main
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+      - name: 'Run Repolinter'
+        uses: DSACMS/repolinter-action@main
         with:
           output_type: 'pull-request'
-          pull_request_labels: 'repolinter-initialized, cms-oss, cms-gov'
-          token: ${{ secrets.REPOLINTER_AUTO_TOKEN }}
+          pull_request_labels: 'repolinter, cms-oss, cms-gov'
