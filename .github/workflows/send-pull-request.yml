@@ -50,6 +50,7 @@ jobs:
       contents: write
       pull-requests: write
     steps:
+      - uses: actions/checkout@v4
       - uses: DSACMS/repolinter-action@main
         with:
           output_type: 'pull-request'
