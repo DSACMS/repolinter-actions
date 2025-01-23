@@ -40,7 +40,7 @@ jobs:
           fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          
+
   repolinter-checks:
     name: Tier 2 Checks
     needs: check-first-run
@@ -50,7 +50,6 @@ jobs:
       contents: write
       pull-requests: write
     steps:
-      - run: echo $RAW_JSON > repolinter.json
       - uses: DSACMS/repolinter-action@main
         with:
           output_type: 'pull-request'
