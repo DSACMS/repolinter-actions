@@ -25,7 +25,7 @@ export function getFileChanges(jsonResult: string): { [key: string]: string } {
 
         for (const result of data.results) {
             const fileName = result.ruleInfo.ruleConfig['file-name'];
-            if (fileName && fs.existsSync(fileName)) {
+            if (fs.existsSync(fileName)) {
                 files[fileName] = fs.readFileSync(fileName, 'utf-8');
             }
         }
@@ -37,11 +37,7 @@ export function getFileChanges(jsonResult: string): { [key: string]: string } {
                 const fileName = result.ruleInfo.ruleConfig['file-name'];
                 const newContent = result.ruleInfo.ruleConfig['file-content'] || '';
 
-                if (fileName) {
-                    files[fileName] = files[fileName]
-                        ? `${files[fileName]} \n ${newContent}`
-                        : newContent;
-                }
+                files[fileName] += `\n ${newContent}`
             }
         }
 

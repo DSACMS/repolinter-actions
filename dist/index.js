@@ -480,7 +480,7 @@ function getFileChanges(jsonResult) {
         const files = {};
         for (const result of data.results) {
             const fileName = result.ruleInfo.ruleConfig['file-name'];
-            if (fileName && fs.existsSync(fileName)) {
+            if (fs.existsSync(fileName)) {
                 files[fileName] = fs.readFileSync(fileName, 'utf-8');
             }
         }
@@ -489,11 +489,7 @@ function getFileChanges(jsonResult) {
                 (result.status === "NOT_PASSED_ERROR" && ((_c = result.lintResult) === null || _c === void 0 ? void 0 : _c.passed) === false)) {
                 const fileName = result.ruleInfo.ruleConfig['file-name'];
                 const newContent = result.ruleInfo.ruleConfig['file-content'] || '';
-                if (fileName) {
-                    files[fileName] = files[fileName]
-                        ? `${files[fileName]} \n ${newContent}`
-                        : newContent;
-                }
+                files[fileName] += `\n ${newContent}`;
             }
         }
         return files;
