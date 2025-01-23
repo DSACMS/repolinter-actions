@@ -476,51 +476,30 @@ const fs = __importStar(__nccwpck_require__(35747));
 function getFileChanges(jsonResult) {
     var _a, _b, _c;
     try {
-        console.log('\n🚀 === DEBUG START ===');
         const data = JSON.parse(jsonResult);
         const files = {};
-        console.log('\n📚 === Reading Existing Files ===');
         for (const result of data.results) {
             const fileName = result.ruleInfo.ruleConfig['file-name'];
-            console.log(`\n🔍 Checking file: ${fileName}`);
-            if (fs.existsSync(fileName)) {
-                const existingContent = fs.readFileSync(fileName, 'utf-8');
-                console.log(`📄 Existing content in ${fileName}:`, existingContent);
-                files[fileName] = existingContent;
-            }
-            else {
-                console.log(`❌ ${fileName} does not exist - will be created`);
-                files[fileName] = '';
+            if (fileName && fs.existsSync(fileName)) {
+                files[fileName] = fs.readFileSync(fileName, 'utf-8');
             }
         }
-        console.log('\n⚙️  === Processing Rules and Adding Missing Content ===');
         for (const result of data.results) {
-            const fileName = result.ruleInfo.ruleConfig['file-name'];
-            console.log(`\n🎯 Processing rules for: ${fileName}`);
-            console.log('📊 Rule status:', result.status);
-            console.log('🔎 Lint result:', result.lintResult);
             if (((_b = (_a = result.lintResult) === null || _a === void 0 ? void 0 : _a.message) === null || _b === void 0 ? void 0 : _b.startsWith("Did not find")) ||
                 (result.status === "NOT_PASSED_ERROR" && ((_c = result.lintResult) === null || _c === void 0 ? void 0 : _c.passed) === false)) {
+                const fileName = result.ruleInfo.ruleConfig['file-name'];
                 const newContent = result.ruleInfo.ruleConfig['file-content'] || '';
-                console.log('📝 Current file content:', files[fileName]);
-                console.log('➕ Content to be added:', newContent);
-                if (!files[fileName].includes(newContent)) {
-                    files[fileName] = (files[fileName] || '') + `\n${newContent}`;
-                    console.log('✨ Updated content:', files[fileName]);
-                }
-                else {
-                    console.log('⏩ Content already exists - skipping');
+                if (fileName) {
+                    files[fileName] = files[fileName]
+                        ? `${files[fileName]} \n ${newContent}`
+                        : newContent;
                 }
             }
         }
-        console.log('\n🎉 === Final File Contents ===');
-        Object.entries(files).forEach(([filename, content]) => {
-            console.log(`\n📋 ${filename}:`, content);
-        });
         return files;
     }
     catch (error) {
-        console.error('❌ Error in getFileChanges:', error);
+        console.error('Error parsing repolinter results:', error);
         return {};
     }
 }
