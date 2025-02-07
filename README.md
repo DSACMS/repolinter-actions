@@ -1,8 +1,4 @@
-[![New Relic Experimental header](https://github.com/newrelic/opensource-website/raw/master/src/images/categories/Experimental.png)](https://opensource.newrelic.com/oss-category/#new-relic-experimental)
-
 # Repolinter Actions
-
-[![GitHub Marketplace version](https://img.shields.io/github/release/newrelic/repolinter-action.svg?label=Marketplace&logo=github)](https://github.com/marketplace/actions/repolinter-action) ![Release](https://github.com/newrelic/repolinter-action/workflows/Release/badge.svg?event=push) [![codecov](https://codecov.io/gh/newrelic/repolinter-action/branch/main/graph/badge.svg?token=EWYZ7C6RSL)](https://codecov.io/gh/newrelic/repolinter-action) 
 
 This action runs [Repolinter](https://github.com/todogroup/repolinter). This fork extends the original [repolinter-action](https://github.com/newrelic/repolinter-action) by allowing users to automatically create Pull Requests that fix compliance issues. When Repolinter detects missing files or required content, it creates a Pull Request with the necessary files and content based on templates defined in your repolinter configuration.  To enable this feature, your repolinter rules must include `file-name` and `file-content` fields within the options object to specify the target file and its template content. 
 
