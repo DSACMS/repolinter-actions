@@ -1,0 +1,49 @@
+{
+  "name": "repolinter-actions",
+  "description": "Run Repolinter in your CI pipeline with the option to send PRs",
+  "longDescription": "",
+  "status": "",
+  "permissions": {
+    "license": [
+      {
+        "name": "",
+        "URL": ""
+      }
+    ],
+    "usageType": "",
+    "exemptionText": ""
+  },
+  "organization": "",
+  "repositoryURL": "https://github.com/DSACMS/repolinter-actions",
+  "vcs": "git",
+  "laborHours": 17061,
+  "platforms": [],
+  "categories": [],
+  "softwareType": "",
+  "languages": [
+    "TypeScript",
+    "JavaScript",
+    "Ruby",
+    "Dockerfile"
+  ],
+  "maintenance": "",
+  "date": {
+    "created": "2024-11-15T18:38:13Z",
+    "lastModified": "2025-02-07T21:07:03Z",
+    "metaDataLastUpdated": "2025-02-07T21:08:38.100Z"
+  },
+  "tags": [],
+  "contact": {
+    "email": "",
+    "name": ""
+  },
+  "localisation": false,
+  "repositoryType": "",
+  "userInput": false,
+  "fismaLevel": "",
+  "group": "",
+  "subsetInHealthcare": [],
+  "userType": [],
+  "repositoryHost": "github",
+  "maturityModelTier": 0
+}
