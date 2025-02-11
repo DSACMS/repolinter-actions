@@ -1,0 +1,49 @@
+{
+  "name": "repolinter-actions",
+  "description": "Run Repolinter in your CI pipeline with the option to send PRs",
+  "longDescription": "This fork extends the original repolinter-action by allowing users to automatically create Pull Requests that fix compliance issues. When Repolinter detects missing files or required content, it creates a Pull Request with the necessary files and content based on templates defined in your repolinter configuration.",
+  "status": "Production",
+  "permissions": {
+    "license": [
+      {
+        "name": "Apache License 2.0",
+        "URL": "https://github.com/DSACMS/repolinter-actions/blob/main/LICENSE"
+      }
+    ],
+    "usageType": "openSource",
+    "exemptionText": ""
+  },
+  "organization": "Centers for Medicare & Medicaid Services",
+  "repositoryURL": "https://github.com/DSACMS/repolinter-actions",
+  "vcs": "git",
+  "laborHours": 17072,
+  "platforms": ["web"],
+  "categories": ["compliance-management", "it-asset-management", "resource-management"],
+  "softwareType": "standalone/web",
+  "languages": [
+    "TypeScript",
+    "JavaScript",
+    "Ruby",
+    "Dockerfile"
+  ],
+  "maintenance": "community",
+  "date": {
+    "created": "2024-11-15T18:38:13Z",
+    "lastModified": "2025-02-07T21:34:26Z",
+    "metaDataLastUpdated": "2025-02-07T21:54:38.292Z"
+  },
+  "tags": ["repolinter", "compliance", "documentation"],
+  "contact": {
+    "email": "opensource@cms.hhs.gov",
+    "name": "CMS Open Source Team"
+  },
+  "localisation": false,
+  "repositoryType": "tools",
+  "userInput": false,
+  "fismaLevel": "low",
+  "group": "CMS/OA/DSAC",
+  "subsetInHealthcare": ["Operational"],
+  "userType": ["Government"],
+  "repositoryHost": "github.com/DSACMS",
+  "maturityModelTier": 3
+}
