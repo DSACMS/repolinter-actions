@@ -771,6 +771,8 @@ function run(disableRetry) {
             core.setOutput("errored" /* ERRORED */, true);
             core.setOutput("passed" /* PASSED */, false);
             core.setFailed('A fatal error was thrown.');
+            console.log('Error type:', typeof error);
+            console.log('Error contents:', JSON.stringify(error, null, 2));
             if (error.name === 'HttpError') {
                 const requestError = error;
                 // Octokit threw an error, so we can print out detailed information
@@ -778,8 +780,11 @@ function run(disableRetry) {
                 core.error(`${requestError.request.method} ${requestError.request.url} returned status ${requestError.status}`);
                 core.debug(JSON.stringify(error));
             }
-            else if (error.stack)
-                console.log("core.error(error.stack)");
+            else if (error.stack) {
+                console.log(`Stack trace: ${error.stack}`);
+                console.log(`Error name: ${error.name}`);
+                console.log(`Error message: ${error.message}`);
+            }
             else
                 core.error(error);
         }
