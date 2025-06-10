@@ -17,7 +17,7 @@
   "repositoryURL": "https://github.com/DSACMS/repolinter-actions",
   "projectURL": "",
   "repositoryHost": "github.com/DSACMS",
-  "repositoryVisibility": "",
+  "repositoryVisibility": "public",
   "vcs": "git",
   "laborHours": 17075,
   "reuseFrequency": {
@@ -49,7 +49,8 @@
   "tags": [
     "repolinter",
     "compliance",
-    "documentation"
+    "documentation",
+    "featured"
   ],
   "contact": {
     "email": "opensource@cms.hhs.gov",
@@ -65,7 +66,7 @@
   "group": "CMS/OA/DSAC",
   "projects": [],
   "systems": [],
-  "upstream": "",
+  "upstream": "https://github.com/DSACMS/repolinter-actions/network/dependencies",
   "subsetInHealthcare": [
     "Operational"
   ],
