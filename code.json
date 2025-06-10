@@ -15,10 +15,23 @@
   },
   "organization": "Centers for Medicare & Medicaid Services",
   "repositoryURL": "https://github.com/DSACMS/repolinter-actions",
+  "projectURL": "",
+  "repositoryHost": "github.com/DSACMS",
+  "repositoryVisibility": "",
   "vcs": "git",
-  "laborHours": 17072,
-  "platforms": ["web"],
-  "categories": ["compliance-management", "it-asset-management", "resource-management"],
+  "laborHours": 17075,
+  "reuseFrequency": {
+    "forks": 0,
+    "clones": 0
+  },
+  "platforms": [
+    "web"
+  ],
+  "categories": [
+    "compliance-management",
+    "it-asset-management",
+    "resource-management"
+  ],
   "softwareType": "standalone/web",
   "languages": [
     "TypeScript",
@@ -27,23 +40,37 @@
     "Dockerfile"
   ],
   "maintenance": "community",
+  "contractNumber": "",
   "date": {
     "created": "2024-11-15T18:38:13Z",
-    "lastModified": "2025-02-07T21:34:26Z",
-    "metaDataLastUpdated": "2025-02-07T21:54:38.292Z"
+    "lastModified": "2025-04-25T14:00:58Z",
+    "metaDataLastUpdated": "2025-06-10T17:37:11.145Z"
   },
-  "tags": ["repolinter", "compliance", "documentation"],
+  "tags": [
+    "repolinter",
+    "compliance",
+    "documentation"
+  ],
   "contact": {
     "email": "opensource@cms.hhs.gov",
     "name": "CMS Open Source Team"
   },
+  "feedbackMechanisms": [
+    "https://github.com/DSACMS/repolinter-actions/issues"
+  ],
   "localisation": false,
   "repositoryType": "tools",
   "userInput": false,
   "fismaLevel": "low",
   "group": "CMS/OA/DSAC",
-  "subsetInHealthcare": ["Operational"],
-  "userType": ["Government"],
-  "repositoryHost": "github.com/DSACMS",
+  "projects": [],
+  "systems": [],
+  "upstream": "",
+  "subsetInHealthcare": [
+    "Operational"
+  ],
+  "userType": [
+    "Government"
+  ],
   "maturityModelTier": 3
 }
