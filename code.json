@@ -1,5 +1,6 @@
 {
   "name": "repolinter-actions",
+  "version": "",
   "description": "Run Repolinter in your CI pipeline with the option to send PRs",
   "longDescription": "This fork extends the original repolinter-action by allowing users to automatically create Pull Requests that fix compliance issues. When Repolinter detects missing files or required content, it creates a Pull Request with the necessary files and content based on templates defined in your repolinter configuration.",
   "status": "Production",
@@ -15,10 +16,26 @@
   },
   "organization": "Centers for Medicare & Medicaid Services",
   "repositoryURL": "https://github.com/DSACMS/repolinter-actions",
+  "repositoryHost": "github.com/DSACMS",
+  "repositoryVisibility": "public",
+  "homepageURL": "",
+  "downloadURL": "",
+  "disclaimerURL": "",
+  "disclaimerText": "",
   "vcs": "git",
-  "laborHours": 17072,
-  "platforms": ["web"],
-  "categories": ["compliance-management", "it-asset-management", "resource-management"],
+  "laborHours": 17075,
+  "reuseFrequency": {
+    "forks": 1,
+    "clones": 0
+  },
+  "platforms": [
+    "web"
+  ],
+  "categories": [
+    "compliance-management",
+    "it-asset-management",
+    "resource-management"
+  ],
   "softwareType": "standalone/web",
   "languages": [
     "TypeScript",
@@ -27,23 +44,39 @@
     "Dockerfile"
   ],
   "maintenance": "community",
+  "contractNumber": [],
+  "SBOM": "https://github.com/DSACMS/repolinter-actions/network/dependencies",
+  "relatedCode": [],
+  "reusedCode": [],
+  "partners": [],
   "date": {
     "created": "2024-11-15T18:38:13Z",
-    "lastModified": "2025-02-07T21:34:26Z",
-    "metaDataLastUpdated": "2025-02-07T21:54:38.292Z"
+    "lastModified": "2025-04-25T14:00:58Z",
+    "metadataLastUpdated": "2025-10-30T22:46:07.419Z"
   },
-  "tags": ["repolinter", "compliance", "documentation"],
+  "tags": [
+    "repolinter",
+    "compliance",
+    "documentation"
+  ],
   "contact": {
     "email": "opensource@cms.hhs.gov",
     "name": "CMS Open Source Team"
   },
+  "feedbackMechanism": "https://github.com/DSACMS/repolinter-actions/issues",
+  "AIUseCaseID": "0",
   "localisation": false,
   "repositoryType": "tools",
   "userInput": false,
   "fismaLevel": "low",
   "group": "CMS/OA/DSAC",
-  "subsetInHealthcare": ["Operational"],
-  "userType": ["Government"],
-  "repositoryHost": "github.com/DSACMS",
+  "projects": [],
+  "systems": [],
+  "subsetInHealthcare": [
+    "Operational"
+  ],
+  "userType": [
+    "Government"
+  ],
   "maturityModelTier": 3
 }
