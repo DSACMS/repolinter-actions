@@ -5,13 +5,13 @@
   "longDescription": "This fork extends the original repolinter-action by allowing users to automatically create Pull Requests that fix compliance issues. When Repolinter detects missing files or required content, it creates a Pull Request with the necessary files and content based on templates defined in your repolinter configuration.",
   "status": "Production",
   "permissions": {
-    "license": [
+    "licenses": [
       {
-        "name": "Apache License 2.0",
+        "name": "Apache-2.0",
         "URL": "https://github.com/DSACMS/repolinter-actions/blob/main/LICENSE"
       }
     ],
-    "usageType": "openSource",
+    "usageType": ["openSource"],
     "exemptionText": ""
   },
   "organization": "Centers for Medicare & Medicaid Services",
@@ -73,10 +73,10 @@
   "projects": [],
   "systems": [],
   "subsetInHealthcare": [
-    "Operational"
+    "operational"
   ],
   "userType": [
-    "Government"
+    "government"
   ],
   "maturityModelTier": 3
 }
