@@ -59,7 +59,8 @@
   "tags": [
     "repolinter",
     "compliance",
-    "documentation"
+    "documentation",
+    "featured"
   ],
   "contact": {
     "email": "opensource@cms.hhs.gov",
@@ -72,7 +73,7 @@
   "userInput": false,
   "fismaLevel": "low",
   "group": "CMS/OA/DSAC",
-  "projects": [],
+  "projects": ["ospo-outbound"],
   "systems": [],
   "subsetInHealthcare": [
     "operational"
