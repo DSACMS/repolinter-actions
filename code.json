@@ -53,13 +53,10 @@
   "partners": [],
   "date": {
     "created": "2024-11-15T18:38:13Z",
-    "lastModified": "2025-11-07T19:01:27Z",
-    "metadataLastUpdated": "2025-12-01T01:04:55.531Z"
+    "lastModified": "2025-12-12T19:25:37Z",
+    "metadataLastUpdated": "2026-01-01T01:03:53.612Z"
   },
   "tags": [
-    "repolinter",
-    "compliance",
-    "documentation",
     "featured"
   ],
   "contact": {
@@ -73,7 +70,9 @@
   "userInput": false,
   "fismaLevel": "low",
   "group": "CMS/OA/DSAC",
-  "projects": ["ospo-outbound"],
+  "projects": [
+    "ospo-outbound"
+  ],
   "systems": [],
   "subsetInHealthcare": [
     "operational"
