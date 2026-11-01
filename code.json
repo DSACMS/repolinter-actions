@@ -49,12 +49,17 @@
   "contractNumber": [],
   "SBOM": "https://github.com/DSACMS/repolinter-actions/network/dependencies",
   "relatedCode": [],
-  "reusedCode": [],
+  "reusedCode": [
+    {
+      "name": "newrelic/repolinter-action",
+      "URL": "https://github.com/newrelic/repolinter-action"
+    }
+  ],
   "partners": [],
   "date": {
     "created": "2024-11-15T18:38:13Z",
-    "lastModified": "2025-11-07T19:01:27Z",
-    "metadataLastUpdated": "2025-12-01T01:04:55.531Z"
+    "lastModified": "2025-12-12T19:25:37Z",
+    "metadataLastUpdated": "2026-11-01T03:06:10.956Z"
   },
   "tags": [
     "repolinter",
@@ -73,7 +78,9 @@
   "userInput": false,
   "fismaLevel": "low",
   "group": "CMS/OA/DSAC",
-  "projects": ["ospo-outbound"],
+  "projects": [
+    "ospo-outbound"
+  ],
   "systems": [],
   "subsetInHealthcare": [
     "operational"
